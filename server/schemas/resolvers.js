@@ -19,9 +19,6 @@ const resolvers = {
   Mutation: {
     addUser: async (parent, args) => {
       const user = await User.create(args);
-      if (!user) {
-        return res.status(400).json({ message: 'Something is wrong!' });
-      }
       const token = signToken(user);
 
       return { token, user };
@@ -33,7 +30,7 @@ const resolvers = {
       if (!user) {
         throw new AuthenticationError('Incorrect credentials');
       }
-
+      
       const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
@@ -42,7 +39,24 @@ const resolvers = {
 
       const token = signToken(user);
       return { token, user };
-    }
+    },
+
+    saveBook: async (parent, args, context) => {
+      if (context.user) {
+        try {
+          const updatedUser = await User.findOneAndUpdate(
+            { _id: context.user._id },
+            { $addToSet: { savedBooks: args } },
+            { new: true, runValidators: true }
+          ).populate('savedBooks');
+
+          return updatedUser;
+        } catch (err) {
+          console.log(err);
+        }
+        throw new AuthenticationError('You need to be logged in')
+      }
+    },
   }
 };
 

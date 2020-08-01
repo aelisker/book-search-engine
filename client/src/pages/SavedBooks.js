@@ -15,33 +15,7 @@ const SavedBooks = () => {
   const { loading, data } = useQuery(GET_ME);
   const userData = data?.me || {};
 
-
-  // use this to determine if `useEffect()` hook needs to run again
-  // const userDataLength = Object.keys(userData).length;
-
   console.log(userData);
-
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-  //       if (!token) {
-  //         return false;
-  //       }
-
-  //       // const response = await getMe(token);
-
-  //       if (!userData) {
-  //         throw new Error('something went wrong!');
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   getUserData();
-  // });
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -52,8 +26,8 @@ const SavedBooks = () => {
     }
 
     try {
-      await removeBook({
-        variables: { bookId: bookId }
+      const { data } = await removeBook({
+        variables: { bookId }
       });
 
       if (error) {

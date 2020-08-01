@@ -45,9 +45,9 @@ const resolvers = {
       if (context.user) {
         const updatedUser = await User.findOneAndUpdate(
           { _id: context.user._id },
-          { $addToSet: { savedBooks: args } },
+          { $addToSet: { savedBooks: args.input } },
           // { $addToSet: { savedBooks: args.input } },
-          { new: true, runValidators: true }
+          { new: true }
         ).populate('savedBooks');
 
           return updatedUser;
@@ -55,17 +55,17 @@ const resolvers = {
         throw new AuthenticationError('You need to be logged in')
       },
 
-      // removeBook: async (parent, args, context) => {
-      //   if (context.user) {
-      //     const updatedUser = await User.findOneAndUpdate(
-      //       { _id: context.user._id },
-      //       { $pull: { savedBooks: { bookId: args.bookId } } },
-      //       { new: true }
-      //     );
-      //     return updatedUser;
-      //   }
-      //   throw new AuthenticationError('You need to be logged in')
-      // } 
+      removeBook: async (parent, args, context) => {
+        if (context.user) {
+          const updatedUser = await User.findOneAndUpdate(
+            { _id: context.user._id },
+            { $pull: { savedBooks: { bookId: args.bookId } } },
+            { new: true }
+          );
+          return updatedUser;
+        }
+        throw new AuthenticationError('You need to be logged in')
+      } 
     }
 };
 

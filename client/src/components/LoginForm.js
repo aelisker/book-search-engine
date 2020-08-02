@@ -20,21 +20,14 @@ const LoginForm = () => {
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // check if form has everything (as per react-bootstrap docs)
-    const form = event.currentTarget;
-    // if (form.checkValidity() === false) {
-    //   event.preventDefault();
-    //   event.stopPropagation();
-    // }
-
     try {
       const { data } = await login({
         variables: { ...userFormData }
       });
 
-      // if (!data.ok) {
-      //   throw new Error('something went wrong!');
-      // }
+      if (error) {
+        throw new Error('something went wrong!');
+      }
 
       Auth.login(data.login.token);
     } catch (err) {
@@ -51,12 +44,8 @@ const LoginForm = () => {
   return (
     <>
       <Form 
-        // noValidate validated={validated} 
         onSubmit={handleFormSubmit}
       >
-        {/* <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your login credentials!
-        </Alert> */}
         {error ? (
           <Alert dismissible variant='danger'>
             Something went wrong with your login credentials!
